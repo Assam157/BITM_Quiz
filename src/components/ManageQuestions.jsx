@@ -57,7 +57,7 @@ function ManageQuestions() {
   };
 
   const saveEdit = async () => {
-    await fetch(`http://localhost:3000/update-question/${editingId}`, {
+    await fetch(`https://bitm-quizbackend.onrender.com/update-question/${editingId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(editData),
@@ -74,7 +74,7 @@ function ManageQuestions() {
   const deleteQuestion = async (id) => {
     if (!window.confirm("Delete this question?")) return;
 
-    await fetch(`http://localhost:3000/delete-question/${id}`, {
+    await fetch(`https://bitm-quizbackend.onrender.com/delete-question/${id}`, {
       method: "DELETE",
     });
 
@@ -177,5 +177,6 @@ function ManageQuestions() {
 }
 
 export default ManageQuestions;
+
 
 
