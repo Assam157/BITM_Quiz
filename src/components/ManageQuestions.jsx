@@ -23,7 +23,7 @@ function ManageQuestions() {
   const fetchQuestions = async () => {
     const url =
       topicFilter === "All"
-        ? "http://localhost:3000/get-questions"
+        ? "https://bitm-quizbackend.onrender.com/get-questions"
         : `http://localhost:3000/get-questions?topic=${topicFilter}`;
 
     const res = await fetch(url);
@@ -177,3 +177,4 @@ function ManageQuestions() {
 }
 
 export default ManageQuestions;
+
