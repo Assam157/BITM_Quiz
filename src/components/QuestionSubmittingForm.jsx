@@ -58,7 +58,7 @@ function PostQuestionForm() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3000/post-question", {
+      const response = await fetch("https://bitm-quizbackend.onrender.com/post-question", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -157,6 +157,7 @@ function PostQuestionForm() {
 }
 
 export default PostQuestionForm;
+
 
 
 
