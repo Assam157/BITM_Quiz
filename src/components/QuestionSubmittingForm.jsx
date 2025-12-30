@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+ import React, { useState } from "react";
 import "./FormCss.css";
 
 function PostQuestionForm() {
   const [formData, setFormData] = useState({
     question: "",
-    answer: "",
-    topic: "General", // default topic
+    options: {
+      A: "",
+      B: "",
+      C: "",
+      D: "",
+    },
+    correctAnswer: "A",
+    topic: "General",
   });
 
   const [responseMessage, setResponseMessage] = useState("");
@@ -19,74 +25,118 @@ function PostQuestionForm() {
     "Other",
   ];
 
-  // Handle input change
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  // ----------------------------
+  // Handlers
+  // ----------------------------
+  const handleQuestionChange = (e) => {
+    setFormData({ ...formData, question: e.target.value });
   };
 
-  // Submit form
+  const handleOptionChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      options: {
+        ...prev.options,
+        [name]: value,
+      },
+    }));
+  };
+
+  const handleCorrectAnswerChange = (e) => {
+    setFormData({ ...formData, correctAnswer: e.target.value });
+  };
+
+  const handleTopicChange = (e) => {
+    setFormData({ ...formData, topic: e.target.value });
+  };
+
+  // ----------------------------
+  // Submit
+  // ----------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("https://bitm-quizbackend.onrender.com/post-question", {
+      const response = await fetch("http://localhost:3000/post-question", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        setResponseMessage("Question posted successfully!");
+        setResponseMessage("✅ MCQ posted successfully!");
         setFormData({
           question: "",
-          answer: "",
+          options: { A: "", B: "", C: "", D: "" },
+          correctAnswer: "A",
           topic: "General",
         });
       } else {
-        setResponseMessage(`Error: ${data.message}`);
+        setResponseMessage(`❌ Error: ${data.message}`);
       }
-    } catch (error) {
-      setResponseMessage("An error occurred while posting the question.");
+    } catch (err) {
+      setResponseMessage("❌ Server error while posting question.");
     }
   };
 
+  // ----------------------------
+  // UI
+  // ----------------------------
   return (
-    <div style={{ margin: "20px" }}>
-      <h2>Submit a Question</h2>
+    <div style={{ margin: "20px", maxWidth: "600px" }}>
+      <div className="ProperName"> 
+      <h2>Submit MCQ Question</h2>
 
       <form onSubmit={handleSubmit}>
+        {/* Question */}
         <div>
           <label>Question:</label>
           <textarea
-            name="question"
             value={formData.question}
-            onChange={handleChange}
+            onChange={handleQuestionChange}
             required
           />
         </div>
 
-        <div>
-          <label>Answer:</label>
-          <textarea
-            name="answer"
-            value={formData.answer}
-            onChange={handleChange}
-            required
-          />
+        {/* Options */}
+        {["A", "B", "C", "D"].map((opt) => (
+          <div key={opt}>
+            <label>Option {opt}:</label>
+            <input
+              type="text"
+              name={opt}
+              value={formData.options[opt]}
+              onChange={handleOptionChange}
+              required
+            />
+          </div>
+        ))}
+
+        {/* Correct Answer */}
+        <div style={{ marginTop: "10px" }}>
+          <label>Correct Answer:</label>
+          <div>
+            {["A", "B", "C", "D"].map((opt) => (
+              <label key={opt} style={{ marginRight: "15px" }}>
+                <input
+                  type="radio"
+                  value={opt}
+                  checked={formData.correctAnswer === opt}
+                  onChange={handleCorrectAnswerChange}
+                />
+                {opt}
+              </label>
+            ))}
+          </div>
         </div>
 
+        {/* Topic */}
         <div>
           <label>Topic:</label>
-          <select
-            name="topic"
-            value={formData.topic}
-            onChange={handleChange}
-          >
+          <select value={formData.topic} onChange={handleTopicChange}>
             {topics.map((topic) => (
               <option key={topic} value={topic}>
                 {topic}
@@ -95,15 +145,18 @@ function PostQuestionForm() {
           </select>
         </div>
 
-        <button type="submit" style={{ marginTop: "10px" }}>
-          Submit Question
+        <button type="submit" style={{ marginTop: "12px" }}>
+          Submit MCQ
         </button>
       </form>
 
       {responseMessage && <p>{responseMessage}</p>}
+      </div>
     </div>
   );
 }
 
 export default PostQuestionForm;
+
+
 
